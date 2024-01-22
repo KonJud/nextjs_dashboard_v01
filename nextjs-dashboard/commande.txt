@@ -1,0 +1,23 @@
+npm install @vercel/postgres
+npm i use-debounce
+
+
+""""" zone de certaines explications de code """"""
+
+----------------------------------------------------
+SELECT invoices.amount, customers.name
+FROM invoices
+JOIN customers ON invoices.customer_id = customers.id
+WHERE invoices.amount = 666;
+
+Ce code est une requête SQL utilisée pour interroger une base de données. Voici ce qu'elle fait, étape par étape :
+
+1. **Sélection des Colonnes** : La requête sélectionne deux colonnes : `amount` de la table `invoices` et `name` de la table `customers`.
+
+2. **Source des Données** : Elle utilise deux tables, `invoices` et `customers`. Ces tables sont vraisemblablement liées par une relation client-facture.
+
+3. **Jointure** : La jointure (`JOIN`) est effectuée entre les tables `invoices` et `customers`. La condition de jointure est que le `customer_id` dans la table `invoices` correspond à l'`id` dans la table `customers`. Cela permet de relier chaque facture à son client correspondant.
+
+4. **Condition de Filtrage** : La requête filtre les données pour ne retourner que les lignes où le montant (`amount`) de la facture dans la table `invoices` est égal à 666.
+
+En résumé, cette requête SQL est utilisée pour trouver les noms des clients (`customers.name`) qui ont des factures (`invoices`) d'un montant exact de 666.

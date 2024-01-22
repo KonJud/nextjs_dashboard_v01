@@ -1,4 +1,5 @@
 import { sql } from '@vercel/postgres';
+import { unstable_noStore as noStore } from 'next/cache';
 import {
   CustomerField,
   CustomersTableType,
@@ -12,18 +13,19 @@ import { formatCurrency } from './utils';
 
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
+  noStore()
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
 
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return data.rows;
   } catch (error) {
@@ -33,7 +35,9 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore()
   try {
+    // Cette ligne déclare une constante data et lui assigne le résultat d'une requête SQL. L'opérateur await est utilisé pour attendre que la promesse renvoyée par sql<LatestInvoiceRaw> soit résolue. LatestInvoiceRaw est un type TypeScript qui décrit la forme des données renvoyées par la requête. la requête SQL qui est exécutée. Elle sélectionne certaines colonnes de la table invoices et de la table customers, joint les deux tables sur la colonne customer_id, trie les résultats par date en ordre décroissant, et limite les résultats à 5.
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
@@ -41,6 +45,8 @@ export async function fetchLatestInvoices() {
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
+
+    // Cette ligne déclare une constante latestInvoices et lui assigne le résultat de la transformation des données renvoyées par la requête SQL. Pour chaque ligne de données (chaque invoice), un nouvel objet est créé qui contient toutes les propriétés de l'invoice original, mais avec la propriété amount transformée en une chaîne formatée en monnaie.
     const latestInvoices = data.rows.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
@@ -53,6 +59,7 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  noStore()
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
@@ -92,6 +99,7 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+  noStore()
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -124,6 +132,7 @@ export async function fetchFilteredInvoices(
 }
 
 export async function fetchInvoicesPages(query: string) {
+  noStore()
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -145,6 +154,7 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string) {
+  noStore()
   try {
     const data = await sql<InvoiceForm>`
       SELECT
@@ -170,6 +180,7 @@ export async function fetchInvoiceById(id: string) {
 }
 
 export async function fetchCustomers() {
+  noStore()
   try {
     const data = await sql<CustomerField>`
       SELECT
@@ -188,6 +199,7 @@ export async function fetchCustomers() {
 }
 
 export async function fetchFilteredCustomers(query: string) {
+  noStore()
   try {
     const data = await sql<CustomersTableType>`
 		SELECT
